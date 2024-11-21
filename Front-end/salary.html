@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary</title>
+    <link rel="stylesheet" href="attendance.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+</head>
+
+<body>
+    <script>
+        let employeeData = []
+        // Define the function to be executed when the window has fully loaded
+        function onPageLoad() {
+            axios.get("http://localhost:8080/employee/findall").then((resp) => {
+                employeeData = resp.data.data;
+                let tableelement = ""
+                employeeData.sort((a, b) => (a.department.departmentId - b.department.departmentId)).forEach((emp, index) => {
+                    tableelement = tableelement +
+                        `<tr key=${index}>
+                        <td>${emp.employeeId}</td>
+                        <td>${emp.name}</td>
+                        <td>${emp.salary * emp.presentDays}</td>
+                        <td>${emp.pf}</td>
+                        <td>${emp.tds}</td>
+                    </tr>`
+
+                })
+                console.log(tableelement);
+                document.getElementsByClassName('tablebody')[0].innerHTML = tableelement
+
+            }).catch((e) => {
+                console.error("There was error on Fetching the employee", e);
+            })
+        }
+
+        // Assign the function to window.onload
+        window.onload = onPageLoad;
+    </script>
+    <div class="details-container">
+        <nav>
+            <div class="nav-container">
+                <!-- <a href="http://127.0.0.1:5500/register.html" class="nav-item">Home</a> -->
+                <a href="/employee.html" class="nav-item">Home</a>
+                <h1>Salary Details</h1>
+                <a href="/attendance.html" class="nav-item">Employee Status</a>
+            </div>
+        </nav>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee-ID</th>
+                    <th>Employee Name</th>
+                    <th>Salary</th>
+                    <th>Provident-fund</th>
+                    <th>TDS</th>
+                </tr>
+            </thead>
+            <tbody class="tablebody">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

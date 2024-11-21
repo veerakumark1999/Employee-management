@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+
+</head>
+
+<body>
+
+
+    <div class="register-container">
+        <h2>Employee Registration</h2>
+        <form onsubmit="handleSubmit(event);" autocomplete="on" autocorrect="on">
+            <div>
+                <label for="name">Name:</label>
+                <input required type="text" id="name" name="name" onchange="handleChange(event);" />
+                <span class="error" id="error-name"></span>
+            </div>
+            <div>
+                <label for="emailId">Email:</label>
+                <input required type="email" id="emailId" name="emailId" onchange="handleChange(event);" />
+            </div>
+            <div>
+                <label for="address">Address:</label>
+                <input required type="text" id="address" name="address" onchange="handleChange(event);" />
+                <span class="error" id="error-address"></span>
+            </div>
+            <div>
+                <label for="departmentName">Department Name:</label>
+                <select name="departmentName" id="departmentName" onchange="handleChange(event);">
+                    <option value="">empty</option>
+                    <option value="IT">IT</option>
+                    <option value="Service">Service</option>
+                    <option value="testing">testing</option>
+                    <option value="Business analyst">Business analyst </option>
+                </select>
+                <span class="error" id="error-departmentName"></span>
+            </div>
+            <div>
+                <label for="workingDays">Working Days:</label>
+                <input required type="number" id="workingDays" name="workingDays" onchange="handleChange(event);" />
+                <span class="error" id="error-workingDays"></span>
+            </div>
+            <div>
+                <label for="presentDays">Present Days:</label>
+                <input type="number" id="presentDays" name="presentDays" onchange="handleChange(event);" />
+                <span class="error" id="error-presentDays"></span>
+            </div>
+            <div>
+                <label for="salary">Salary:</label>
+                <input type="number" id="salary" name="salary" onchange="handleChange(event);" />
+                <span class="error" id="error-salary"></span>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="submit-button">Register</button>
+                <button type="button" onclick="handleReset();" class="reset-button">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let employee = {
+            name: "",
+            emailId: "",
+            address: "",
+            departmentName: "",
+            workingDays: "",
+            presentDays: "",
+            salary: ""
+        };
+        let error = {};
+
+        function handleChange(e) {
+            const { name, value } = e.target;
+            employee[name] = value;
+        }
+        
+        function validateForm() {
+            let valid = true;
+
+            const errorMsg = "Please fill all fields";
+            if (!employee.name || !employee.emailId || !employee.departmentName || !employee.address || !employee.salary || parseInt(employee.salary) <= 0 || !employee.workingDays || parseInt(employee.workingDays) <= 20 || !employee.presentDays || parseInt(employee.presentDays) <= 0) {
+                error = errorMsg;
+                valid = false;
+            }
+            return valid;
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            if (!validateForm()) {
+                document.getElementById('error-name').innerText = error;
+                return;
+            }
+            try {
+                const response = await axios.post("http://localhost:8080/employee/add", employee);
+               
+                console.log(response.data);
+                if (response.status === 201) {
+                    alert("Registration is done!");
+                    window.location.href = 'employee.html';
+                    handleReset();
+                }
+            } catch (error) {
+                console.error("There was an error registering employee!", error);
+            }
+        }
+
+        function handleReset() {
+            employee = {
+                name: "",
+                emailId: "",
+                address: "",
+                departmentName: "",
+                workingDays: "",
+                presentDays: "",
+                salary: ""
+            };
+        }
+    </script>
+</body>
+
+</html>

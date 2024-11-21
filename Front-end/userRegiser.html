@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+
+</head>
+
+<body>
+
+
+    <div class="register-container">
+        <h2> Registration</h2>
+        <form onsubmit="handleSubmit(event);" autocomplete="on" autocorrect="on">
+            <div>
+                <label for="id">id:</label>
+                <input type="number" id="id" name="id" onchange="handleChange(event);" />
+                <span class="error" id="error-id"></span>
+            </div>
+            <div>
+                <label for="name">Name:</label>
+                <input required type="text" id="name" name="name" onchange="handleChange(event);" />
+                <span class="error" id="error-name"></span>
+            </div>
+            <div>
+                <label for="emailId">Email:</label>
+                <input required type="email" id="emailId" name="emailId" onchange="handleChange(event);" />
+            </div>
+           
+            <div class="button-group">
+                <button type="submit" class="submit-button">Register</button>
+                <button type="button" onclick="handleReset();" class="reset-button">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let user = {
+            name: "",
+            email: "",
+            id:""
+        };
+        let error = {};
+
+        function handleChange(e) {
+            const { name, value } = e.target;
+            user[name] = value;
+            
+
+        }
+        function handleChange(e) {
+            const { emailId, value } = e.target;
+            user[emailId] = value;
+            
+
+        }
+        
+        function validateForm() {
+            let valid = true;
+            console.log(user)
+            const errorMsg = "Please fill all fields";
+            if (!user.name || !user.emailId ) {
+                error = errorMsg;
+                valid = false;
+            }
+            return valid;
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            if (!validateForm()) {
+                document.getElementById('error-name').innerText = error;
+                return;
+            }
+            try {
+                const response = await axios.post("http://localhost:8080/user/add", user);
+               
+                console.log(response.data);
+                if (response.status === 201) {
+                    alert("Registration is done!");
+                    // window.location.href = 'employee.html';
+                    handleReset();
+                }
+            } catch (error) {
+                console.error("There was an error registering user!", error);
+            }
+        }
+
+        function handleReset() {
+            user = {
+                name: "",
+                emailId: ""
+                
+            };
+        }
+    </script>
+</body>
+
+</html>

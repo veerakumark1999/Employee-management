@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Update</title>
+    <link rel="stylesheet" href="update.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+</head>
+
+<body>
+    <div class="register-container">
+        <h2>Employee Update</h2>
+        <form id="employeeForm" onsubmit="handleSubmit(event);" autocomplete="on" autocorrect="on">
+            <div>
+                <label for="employeeId">Employee ID</label>
+                <input type="number" id="employeeId" name="employeeId" onchange="handleChange(event);" readonly />
+                <span class="error" id="error-employeeId"></span>
+            </div>
+            <div>
+                <label for="name">Name:</label>
+                <input required type="text" id="name" name="name" onchange="handleChange(event);" />
+                <span class="error" id="error-name"></span>
+            </div>
+            <div>
+                <label for="emailId">Email:</label>
+                <input required type="email" id="emailId" name="emailId" onchange="handleChange(event);" />
+            </div>
+            <div>
+                <label for="address">Address:</label>
+                <input required type="text" id="address" name="address" onchange="handleChange(event);" />
+                <span class="error" id="error-address"></span>
+            </div>
+            <div>
+                <label for="departmentName">Department Name:</label>
+                <select name="departmentName" id="departmentName" onchange="handleChange(event);">
+                    <option value="">empty</option>
+                    <option value="IT">IT</option>
+                    <option value="Service">Service</option>
+                    <option value="testing">testing</option>
+                    <option value="Business analyst">Business analyst</option>
+                </select>
+                <span class="error" id="error-departmentName"></span>
+            </div>
+            <div>
+                <label for="workingDays">Working Days:</label>
+                <input required type="number" id="workingDays" name="workingDays" onchange="handleChange(event);" />
+                <span class="error" id="error-workingDays"></span>
+            </div>
+            <div>
+                <label for="presentDays">Present Days:</label>
+                <input type="number" id="presentDays" name="presentDays" onchange="handleChange(event);" />
+                <span class="error" id="error-presentDays"></span>
+            </div>
+            <div>
+                <label for="salary">Salary:</label>
+                <input type="number" id="salary" name="salary" onchange="handleChange(event);" />
+                <span class="error" id="error-salary"></span>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="submit-button">Update</button>
+                <button type="button" onclick="handleReset();" class="reset-button">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const Id = getQueryParam('employeeId');
+        // alert(Id);  // For debugging purposes
+
+        async function fetchEmployees() {
+            try {
+                const response = await fetch(`http://localhost:8080/employee/find?employeeId=${Id}`);
+                const data = await response.json();
+                const employee = data.data;
+
+                if (employee) {
+                    document.getElementById('employeeId').value = employee.employeeId;
+                    document.getElementById('name').value = employee.name;
+                    document.getElementById('emailId').value = employee.emailId;
+                    document.getElementById('address').value = employee.address;
+                    document.getElementById('departmentName').value = employee.departmentName;
+                    document.getElementById('workingDays').value = employee.workingDays;
+                    document.getElementById('presentDays').value = employee.presentDays;
+                    document.getElementById('salary').value = employee.salary;
+
+                    // Initialize the employee object with fetched data
+                    employeeData = { ...employee };
+                } else {
+                    console.error("No employee data found.");
+                }
+            } catch (e) {
+                console.error("There was an error fetching the employee:", e);
+            }
+        }
+
+        let employeeData = {
+            employeeId: "",
+            name: "",
+            emailId: "",
+            address: "",
+            departmentName: "",
+            workingDays: "",
+            presentDays: "",
+            salary: ""
+        };
+
+        function handleChange(e) {
+            const { name, value } = e.target;
+            employeeData[name] = value;
+            console.log(employeeData);  // For debugging purposes
+        }
+
+        function validateForm() {
+            let valid = true;
+            let errorMsg = "";
+
+            if (!employeeData.name || !employeeData.emailId || !employeeData.departmentName || !employeeData.address || !employeeData.salary || parseInt(employeeData.salary) <= 0 || !employeeData.workingDays || parseInt(employeeData.workingDays) <= 20 || !employeeData.presentDays || parseInt(employeeData.presentDays) <= 0) {
+                errorMsg = "Please fill all fields correctly";
+                valid = false;
+            }
+
+            // Display validation errors
+            if (errorMsg) {
+                document.getElementById('error-name').innerText = errorMsg;
+            }
+
+            return valid;
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();  // Prevent the default form submission behavior
+
+            if (!validateForm()) {
+                return;  // Exit if validation fails
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/employee/update", {
+                    method: 'PUT',  // Use PUT for updating resources
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employeeData)  // Send the employee data as JSON
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert("update is done!")
+                  window.location.href='employee.html'
+                    handleReset();  
+                } else {
+                    const error = await response.json();
+                    console.error("Failed to update:", error.message);
+                    alert("Failed to update employee.");
+                }
+            } catch (error) {
+                console.error("There was an error updating the employee:", error);
+                alert("Error updating employee.");
+            }
+        }
+
+        function handleReset() {
+            document.getElementById('employeeForm').reset();  // Reset the form fields
+            employeeData = {
+                employeeId: "",
+                name: "",
+                emailId: "",
+                address: "",
+                departmentName: "",
+                workingDays: "",
+                presentDays: "",
+                salary: ""
+            };
+        }
+
+        // Initialize the form with employee data
+        fetchEmployees();
+    </script>
+</body>
+
+</html>

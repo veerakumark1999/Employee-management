@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Status</title>
+    <link rel="stylesheet" href="attendance.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+</head>
+
+<body>
+    <script>
+        let employeeData = []
+        // Define the function to be executed when the window has fully loaded
+        function onPageLoad() {
+            axios.get("http://localhost:8080/employee/findall").then((resp) => {
+                employeeData = resp.data.data;
+                let tableelement = ""
+                employeeData.sort((a, b) => (a.department.departmentId - b.department.departmentId)).forEach((emp, index) => {
+                    tableelement = tableelement +
+                        `<tr key={${index}}>
+                        <td>${emp.department.departmentId}</td>
+                        <td>${emp.name}</td>
+                        <td>${emp.departmentName}</td>
+                        <td>${emp.workingDays}</td>
+                        <td>${emp.presentDays}</td>
+                        <td>${emp.leaveDays}</td>
+                        <td>${emp.emailId}</td>
+                    </tr>`
+
+                })
+                console.log(tableelement);
+                document.getElementsByClassName('tablebody')[0].innerHTML = tableelement
+
+            }).catch((e) => {
+                console.error("There was error on Fetching the employee", e);
+            })
+        }
+
+        // Assign the function to window.onload
+        window.onload = onPageLoad;
+    </script>
+    <div class="details-container">
+        <nav>
+            <div class="nav-container">
+                <a href="/employee.html" class="nav-item">Home</a>
+                <h1>Employee Status</h1>
+                <a href="/salary.html" class="nav-item">Salary Details</a>
+            </div>
+        </nav>
+        <table>
+            <thead>
+                <tr>
+                    <th>Department-ID</th>
+                    <th>Name</th>
+                    <th>Department-name</th>
+                    <th>Working-days</th>
+                    <th>Present-days</th>
+                    <th>Leave-days</th>
+                    <th>Contact</th>
+
+                </tr>
+            </thead>
+            <tbody class="tablebody">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

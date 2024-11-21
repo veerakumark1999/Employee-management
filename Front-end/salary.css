@@ -1,0 +1,105 @@
+.salary-container {
+    margin: 20px;
+    font-family: 'Arial', sans-serif;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+thead {
+    background: #4CAF50;
+    color: white;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+th {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+tbody tr {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+tbody tr:hover {
+    background: #e0f7fa;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: glow 1s infinite alternate;
+}
+
+td a {
+    color: #1e90ff;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 2px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+td a:hover {
+    color: #fff;
+    background-color: #1e90ff;
+}
+
+
+
+.click {
+    color: #1e90ff;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.click:hover {
+    color: #1001e5;
+    font-style: normal;
+    font-weight: bolder;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    to {
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+}
+
+@media (max-width: 768px) {
+
+    th,
+    td {
+        padding: 10px;
+    }
+}

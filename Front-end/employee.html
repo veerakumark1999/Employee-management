@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Employee.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+    <title>Employee List</title>
+</head>
+
+<body>
+    <div id="container">
+        <nav>
+            <div class="nav-container">
+                <a href="/register.html" class="nav-item" onclick="handleRegister()">Register</a>
+                <h1>Home</h1>
+                <a href="/attendance.html" class="nav-item" onclick="handleClick()">Status</a>
+                <!-- <div>
+                <select id="employeeAction">
+                    <option value="Update">UPDATE</option>
+                    <option value="delete">DELETE</option>
+                </select>
+                </div> -->
+            </div>
+
+
+        </nav>
+        <div class="employee-container">
+            <div>
+                <table class="animate__animated animate__fadeIn">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Department</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let employee = [];
+
+        function fetchEmployees() {
+            fetch("http://localhost:8080/employee/findall")
+                .then(response => response.json())
+                .then(data => {
+                    employee = data.data;
+                    console.log(employee);
+                    populateTable();
+                })
+                .catch(e => {
+                    console.error("There was an error Fetching the employee", e);
+                });
+        }
+
+        function populateTable() {
+            const tableBody = document.getElementById('employeeTableBody');
+            tableBody.innerHTML = '';
+            employee.forEach((emps, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${emps.employeeId}</td>
+                    <td>${emps.name}</td>
+                    <td>${emps.address}</td>
+                        <td>
+                      ${emps.departmentName}
+    
+      
+                       </td> 
+                       <td>  <span class="action-button update" onclick="handleUpdateEmp(${emps.employeeId})">
+            <i class="fa-solid fa-pen"></i>
+                     </span>
+                <span class="action-button delete" onclick="handleDeleteEmp(${emps.employeeId})">
+            <i class="fa-solid fa-trash"></i>
+                 </span></td>`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function handleDeleteEmp(Emp) {
+            console.log("http://localhost:8080/employee/delete?employeeId=" + Emp);
+            const response = await axios.delete("http://localhost:8080/employee/delete?employeeId=" + Emp)
+                .then(response => {
+                    console.log(response.data)
+                    alert(response.data.data)
+                    fetchEmployees()
+                })
+        }
+
+        function handleUpdateEmp(Emp) {
+
+            window.location.href = 'update.html' + '?employeeId=' + encodeURIComponent(Emp);
+
+        }
+
+
+
+        // <span><img src="https://img.icons8.com/?size=30&id=78581&format=png" alt="" /></span>
+        // function handleClick() {
+        //     // Logic to navigate to "/status" and pass employee data.
+        //     console.log(employee);
+        // }
+
+        // function handleRegister() {
+        //     // Logic to navigate to "/register"
+        // }
+
+        fetchEmployees();
+    </script>
+</body>
+
+</html>
